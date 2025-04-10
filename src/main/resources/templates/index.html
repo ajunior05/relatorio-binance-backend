@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Importador de CSV</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+<h1>Importador de CSV</h1>
+<form method="post" enctype="multipart/form-data" action="/upload">
+    <input type="file" name="file" accept=".csv" required />
+    <button type="submit">Importar</button>
+</form>
+
+<form method="get" action="/consultar">
+    <label for="orderNo">Buscar por OrderNo:</label>
+    <input type="text" id="orderNo" name="orderNo" />
+
+    <label for="data">Data (yyyy-MM-dd):</label>
+    <input type="date" id="data" name="data" />
+
+    <!-- Combo box (select) para escolher uma opção -->
+    <label for="options">Status da ordem:</label>
+    <select id="options" name="status">
+        <option value="" selected>Selecione</option>
+        <option value="FILLED">Finalizada</option>
+        <option value="CANCELED">Cancelada</option>
+    </select>
+
+    <button type="submit">Buscar</button>
+</form>
+
+<h2>Registros Importados</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Data</th>
+        <th>OrderNo</th>
+        <th>Par</th>
+        <th>Tipo</th>
+        <th>Side</th>
+        <th>Preço</th>
+        <th>Quantidade</th>
+        <th>Executado</th>
+        <th>Preço Médio</th>
+        <th>Total</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="registro : ${registros}">
+        <td th:text="${registro.dateUTC}"></td>
+        <td th:text="${registro.orderNo}"></td>
+        <td th:text="${registro.pair}"></td>
+        <td th:text="${registro.type}"></td>
+        <td th:text="${registro.side}"></td>
+        <td th:text="${registro.orderPriceFormatado}"></td>
+        <td th:text="${registro.orderAmountFormatado}"></td>
+        <td th:text="${registro.executedFormatado}"></td>
+        <td th:text="${registro.averagePriceFormatado}"></td>
+        <td th:text="${registro.tradingTotalFormatado}"></td>
+        <td th:text="${registro.status}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
