@@ -2,6 +2,13 @@ package br.relatorio.binance.controller;
 
 import br.relatorio.binance.repository.RelatorioTransacaoRepository;
 import br.relatorio.binance.service.RelatorioTransacaoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +23,8 @@ import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Relatório Transação", description = "Importação de arquivos CSV de transações")
+@SecurityRequirement(name = "Bearer JWT")
 public class RelatorioTransacaoImportController {
 
     @Autowired
@@ -24,6 +33,15 @@ public class RelatorioTransacaoImportController {
     @Autowired
     private RelatorioTransacaoRepository relatorioTransacaoRepository;
 
+    @Operation(
+            summary = "Importar transações de um arquivo CSV",
+            description = "Importa os dados de transações contidos em um arquivo CSV enviado pelo usuário."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Importação realizada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro ao processar o arquivo",
+                    content = @Content(schema = @Schema(implementation = String.class)))
+    })
     @PostMapping("/importarTransacao")
     public ResponseEntity<String> importarCSV(@RequestParam("arquivo") MultipartFile arquivo) {
         try {

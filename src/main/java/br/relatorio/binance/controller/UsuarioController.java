@@ -3,6 +3,10 @@ package br.relatorio.binance.controller;
 import br.relatorio.binance.configuration.JwtUtil;
 import br.relatorio.binance.model.Usuario;
 import br.relatorio.binance.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@Tag(name = "Usuários", description = "Cadastro e autenticação de usuários")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -26,7 +31,11 @@ public class UsuarioController {
         this.authenticationManager = authenticationManager;
     }
 
-    // ✅ Cadastro de novo usuário
+    @Operation(summary = "Cadastro de novo usuário", description = "Registra um novo usuário com e-mail e senha.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário cadastrado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Email já cadastrado")
+    })
     @PostMapping("/cadastro")
     public ResponseEntity<?> cadastrar(@RequestBody Usuario usuario) {
         if (usuarioService.buscarPorEmail(usuario.getEmail()).isPresent()) {
@@ -36,7 +45,11 @@ public class UsuarioController {
         return ResponseEntity.ok("Usuário cadastrado com sucesso!");
     }
 
-    // ✅ Login e retorno de token JWT
+    @Operation(summary = "Login de usuário", description = "Autentica o usuário e retorna um token JWT.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login bem-sucedido e token JWT retornado"),
+            @ApiResponse(responseCode = "401", description = "Email ou senha inválidos")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Usuario usuario) {
         try {
