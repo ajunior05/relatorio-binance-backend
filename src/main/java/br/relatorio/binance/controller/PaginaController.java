@@ -1,7 +1,9 @@
 package br.relatorio.binance.controller;
 
+import br.relatorio.binance.model.PairsCripto;
 import br.relatorio.binance.model.RelatorioOrdem;
 import br.relatorio.binance.model.RelatorioTransacao;
+import br.relatorio.binance.repository.PairsCriptoRepository;
 import br.relatorio.binance.repository.RelatorioOrdemRepository;
 import br.relatorio.binance.repository.RelatorioTransacaoRepository;
 import br.relatorio.binance.service.RelatorioOrdemService;
@@ -35,6 +37,9 @@ public class PaginaController {
     @Autowired
     private RelatorioTransacaoRepository relatorioTransacaoRepository;
 
+    @Autowired
+    private PairsCriptoRepository pairsCriptoRepository;
+
     @Operation(summary = "Consultar Ordens", description = "Retorna uma lista de ordens com base nos filtros: orderNo, status ou data.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consulta realizada com sucesso"),
@@ -43,12 +48,15 @@ public class PaginaController {
     public List<RelatorioOrdem> consultarOrdens(
             @Parameter(description = "Número da ordem") @RequestParam(required = false) String orderNo,
             @Parameter(description = "Status da ordem") @RequestParam(required = false, defaultValue = "") String status,
+            @Parameter(description = "Lista de pares") @RequestParam(required = false, defaultValue = "") String pairs,
             @Parameter(description = "Data da ordem (yyyy-MM-dd)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
 
 
-        if (orderNo != null && !orderNo.isEmpty()) {
+        if (pairs != null && !pairs.isEmpty()) {
+            return relatorioOrdemRepository.findByPair(pairs);
+        } else if (orderNo != null && !orderNo.isEmpty()) {
             return relatorioOrdemRepository.findByOrderNoContaining(orderNo);
-        } else if (data != null) {
+        }else if (data != null) {
             return relatorioOrdemRepository.findByDateUTCBetween(
                     data.atStartOfDay(), data.plusDays(365).atStartOfDay());
         } else if (status != null && !status.isEmpty()) {
@@ -56,6 +64,15 @@ public class PaginaController {
         } else {
             return relatorioOrdemRepository.findAll();
         }
+    }
+
+    @Operation(summary = "Consultar pares", description = "Retorna uma lista de pares.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Consulta realizada com sucesso"),
+    })
+    @GetMapping("/pairs")
+    public List<PairsCripto> findAllPairsCripto(){
+        return pairsCriptoRepository.findAll();
     }
 
     @Operation(summary = "Consultar Transações", description = "Retorna uma lista de transações com base nos filtros: coin, operation ou data.")

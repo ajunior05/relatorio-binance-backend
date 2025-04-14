@@ -9,7 +9,7 @@ import java.util.List;
 public interface RelatorioOrdemRepository extends JpaRepository<RelatorioOrdem, Long> {
 
         List<RelatorioOrdem> findByOrderNoContaining(String orderNo);
-        Boolean findByOrderNo(String orderNo);
+        List<RelatorioOrdem> findByPair(String pair);
         List<RelatorioOrdem> findByStatus(String status);
         List<RelatorioOrdem> findByDateUTCBetween(LocalDateTime start, LocalDateTime end);
 }

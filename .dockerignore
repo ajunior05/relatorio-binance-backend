@@ -1,0 +1,21 @@
+# Ignorar dependências do Maven
+target/
+
+# Ignorar arquivos temporários do Maven
+.mvn/
+
+# Ignorar arquivos de configuração locais
+.env
+*.properties
+
+# Ignorar arquivos de versionamento
+.git
+.gitignore
+
+# Ignorar arquivos temporários da IDE
+.idea
+.vscode
+
+# Ignorar o próprio Dockerfile e docker-compose.yml
+Dockerfile
+docker-compose.yml

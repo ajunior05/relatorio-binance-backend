@@ -1,6 +1,7 @@
 package br.relatorio.binance.model;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

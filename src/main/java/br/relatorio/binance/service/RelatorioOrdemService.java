@@ -51,7 +51,7 @@ public class RelatorioOrdemService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (CSVRecord record : parser) {
 
-                if (Boolean.FALSE.equals(relatorioOrdemRepository.findByOrderNoContaining(record.get("OrderNo")))){
+                //if (Boolean.FALSE.equals(relatorioOrdemRepository.findByOrderNoContaining(record.get("OrderNo")))){
                     // Atribui os valores de cada linha do CSV à entidade
                     RelatorioOrdem registro = new RelatorioOrdem();
                     registro.setAveragePrice(parseBigDecimal(record.get("Average Price")));
@@ -72,7 +72,7 @@ public class RelatorioOrdemService {
                     // Salva o registro no banco de dados
                     relatorioOrdemRepository.save(registro);
                     i++;
-                }
+               // }
             }
             return i;
         }

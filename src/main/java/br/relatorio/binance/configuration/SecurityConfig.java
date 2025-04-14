@@ -1,6 +1,7 @@
 package br.relatorio.binance.configuration;
 
 import br.relatorio.binance.service.UsuarioService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,9 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
+    @Value("#{'${cors.allowed-origins}'.split(',')}")
+    private List<String> corsUrls;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -50,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173")); // Frontend
+        config.setAllowedOrigins(corsUrls); // Frontend
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitidos
         config.setAllowedHeaders(List.of("*")); // Cabeçalhos permitidos
         config.setAllowCredentials(true); // Se o frontend envia cookies/token
