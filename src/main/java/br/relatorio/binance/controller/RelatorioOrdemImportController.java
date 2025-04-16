@@ -1,6 +1,7 @@
 package br.relatorio.binance.controller;
 
 import br.relatorio.binance.repository.RelatorioOrdemRepository;
+import br.relatorio.binance.repository.UsuarioRepository;
 import br.relatorio.binance.service.RelatorioOrdemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

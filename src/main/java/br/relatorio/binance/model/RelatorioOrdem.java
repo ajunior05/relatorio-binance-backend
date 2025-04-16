@@ -30,6 +30,11 @@ public class RelatorioOrdem {
     private BigDecimal tradingTotal;
     private String status;
 
+    @Autowired
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
+
     // Construtor
     public RelatorioOrdem(LocalDateTime dateUTC, String orderNo, String pair, String type, String side,
                     BigDecimal orderPrice, BigDecimal orderAmount, String time, BigDecimal executed, 
@@ -46,10 +51,19 @@ public class RelatorioOrdem {
         this.averagePrice = averagePrice;
         this.tradingTotal = tradingTotal;
         this.status = status;
+        this.usuario = new Usuario();
     }
 
     public RelatorioOrdem() {
 
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     // Getters and Setters

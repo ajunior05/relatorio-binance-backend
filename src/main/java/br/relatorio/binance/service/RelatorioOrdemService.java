@@ -1,11 +1,15 @@
 package br.relatorio.binance.service;
 
 import br.relatorio.binance.model.RelatorioOrdem;
+import br.relatorio.binance.model.Usuario;
 import br.relatorio.binance.repository.RelatorioOrdemRepository;
+import br.relatorio.binance.repository.UsuarioRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -19,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RelatorioOrdemService {
@@ -26,7 +31,13 @@ public class RelatorioOrdemService {
     @Autowired
     private RelatorioOrdemRepository relatorioOrdemRepository;
 
-    public Integer importarCSV(Path caminhoDoArquivo) throws IOException {
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+   public Integer importarCSV(Path caminhoDoArquivo) throws IOException {
         // Lê o arquivo CSV
         try (InputStreamReader reader = new InputStreamReader(
                 new FileInputStream(caminhoDoArquivo.toFile()), StandardCharsets.UTF_8)) {
@@ -38,7 +49,7 @@ public class RelatorioOrdemService {
                     .parse(reader);
 
             Map<String, String> headerMap = new HashMap<>();
-
+        Usuario usuario = usuarioService.getUsuarioLogado();
             List<String> rawHeaders = parser.getHeaderNames();
             for (String rawHeader : rawHeaders) {
                 String cleanKey = rawHeader
@@ -51,7 +62,7 @@ public class RelatorioOrdemService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             for (CSVRecord record : parser) {
 
-                //if (Boolean.FALSE.equals(relatorioOrdemRepository.findByOrderNoContaining(record.get("OrderNo")))){
+                if (Boolean.FALSE.equals(relatorioOrdemRepository.findByOrderNoContaining(record.get("OrderNo")))){
                     // Atribui os valores de cada linha do CSV à entidade
                     RelatorioOrdem registro = new RelatorioOrdem();
                     registro.setAveragePrice(parseBigDecimal(record.get("Average Price")));
@@ -66,13 +77,11 @@ public class RelatorioOrdemService {
                     registro.setTradingTotal(parseBigDecimal(record.get("Trading total")));
                     registro.setType(record.get("Type"));
                     registro.setDateUTC(LocalDateTime.parse(record.get(headerMap.get("Date(UTC)")), formatter));
-
-                    // Converte o valor de 'data_nascimento' para LocalDate
-
+                    registro.setUsuario(usuario);
                     // Salva o registro no banco de dados
                     relatorioOrdemRepository.save(registro);
                     i++;
-               // }
+                }
             }
             return i;
         }

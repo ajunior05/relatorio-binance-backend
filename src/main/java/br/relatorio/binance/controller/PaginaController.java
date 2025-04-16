@@ -3,10 +3,12 @@ package br.relatorio.binance.controller;
 import br.relatorio.binance.model.PairsCripto;
 import br.relatorio.binance.model.RelatorioOrdem;
 import br.relatorio.binance.model.RelatorioTransacao;
+import br.relatorio.binance.model.Usuario;
 import br.relatorio.binance.repository.PairsCriptoRepository;
 import br.relatorio.binance.repository.RelatorioOrdemRepository;
 import br.relatorio.binance.repository.RelatorioTransacaoRepository;
 import br.relatorio.binance.service.RelatorioOrdemService;
+import br.relatorio.binance.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -38,6 +41,9 @@ public class PaginaController {
     private RelatorioTransacaoRepository relatorioTransacaoRepository;
 
     @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
     private PairsCriptoRepository pairsCriptoRepository;
 
     @Operation(summary = "Consultar Ordens", description = "Retorna uma lista de ordens com base nos filtros: orderNo, status ou data.")
@@ -50,19 +56,11 @@ public class PaginaController {
             @Parameter(description = "Status da ordem") @RequestParam(required = false, defaultValue = "") String status,
             @Parameter(description = "Lista de pares") @RequestParam(required = false, defaultValue = "") String pairs,
             @Parameter(description = "Data da ordem (yyyy-MM-dd)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
-
-
-        if (pairs != null && !pairs.isEmpty()) {
-            return relatorioOrdemRepository.findByPair(pairs);
-        } else if (orderNo != null && !orderNo.isEmpty()) {
-            return relatorioOrdemRepository.findByOrderNoContaining(orderNo);
-        }else if (data != null) {
-            return relatorioOrdemRepository.findByDateUTCBetween(
-                    data.atStartOfDay(), data.plusDays(365).atStartOfDay());
-        } else if (status != null && !status.isEmpty()) {
-            return relatorioOrdemRepository.findByStatus(status);
-        } else {
-            return relatorioOrdemRepository.findAll();
+        Usuario usuario = usuarioService.getUsuarioLogado();
+        if ((orderNo != null)||(status != null)||(pairs != null)||(data != null)){
+            return relatorioOrdemRepository.buscarOrdensFiltro(orderNo,status,pairs, data, usuario);
+        } else{
+            return Collections.emptyList();
         }
     }
 
@@ -86,7 +84,14 @@ public class PaginaController {
             @Parameter(description = "Data da transação (yyyy-MM-dd)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
 
 
-        if (coin != null && !coin.isEmpty()) {
+        Usuario usuario = usuarioService.getUsuarioLogado();
+
+        if ((coin != null)||(operation != null)||(data != null)){
+            return relatorioTransacaoRepository.buscarOrdensFiltro(coin,operation,data,usuario);
+        } else{
+            return Collections.emptyList();
+        }
+        /*if (coin != null && !coin.isEmpty()) {
             return relatorioTransacaoRepository.findByCoin(coin);
         } else if (data != null) {
             return relatorioTransacaoRepository.findByUtcTime(
@@ -94,9 +99,9 @@ public class PaginaController {
         } else if (operation != null && !operation.isEmpty()) {
             return relatorioTransacaoRepository.findByOperation(operation);
         } else {
-            List<RelatorioTransacao> teste =relatorioTransacaoRepository.findAll();
-            return teste;
-        }
+            return relatorioTransacaoRepository.findAll();
+
+        }*/
     }
 
 

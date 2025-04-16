@@ -37,6 +37,10 @@ public class Usuario implements UserDetails {
         return senha;
     }
 
+    public Long getId(){
+        return id;
+    }
+
     @Override
     public String getUsername() {
         return email;

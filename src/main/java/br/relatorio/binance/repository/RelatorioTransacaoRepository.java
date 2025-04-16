@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface RelatorioTransacaoRepository extends JpaRepository<RelatorioTransacao, Long> {
+public interface RelatorioTransacaoRepository extends RelatorioTransacaoRepositoryCustom, JpaRepository<RelatorioTransacao, Long> {
 
         List<RelatorioTransacao> findByCoin(String coin);
         List<RelatorioTransacao> findByOperation(String operation);

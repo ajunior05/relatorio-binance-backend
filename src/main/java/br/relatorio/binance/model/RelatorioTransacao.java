@@ -1,6 +1,7 @@
 package br.relatorio.binance.model;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +21,11 @@ public class RelatorioTransacao {
     private BigDecimal change;
     private String remark;
 
+    @Autowired
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
+
     public RelatorioTransacao(Long userId, LocalDateTime utcTime, String account, String operation, String coin, BigDecimal change, String remark) {
         this.userId = userId;
         this.utcTime = utcTime;
@@ -28,10 +34,19 @@ public class RelatorioTransacao {
         this.coin = coin;
         this.change = change;
         this.remark = remark;
+        this.usuario = new Usuario();
     }
 
     public RelatorioTransacao() {
 
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Long getUserId() {

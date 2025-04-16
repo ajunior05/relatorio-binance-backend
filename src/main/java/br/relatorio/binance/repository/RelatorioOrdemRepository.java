@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface RelatorioOrdemRepository extends JpaRepository<RelatorioOrdem, Long> {
+public interface RelatorioOrdemRepository extends RelatorioOrdemRepositoryCustom, JpaRepository<RelatorioOrdem, Long> {
 
         List<RelatorioOrdem> findByOrderNoContaining(String orderNo);
         List<RelatorioOrdem> findByPair(String pair);

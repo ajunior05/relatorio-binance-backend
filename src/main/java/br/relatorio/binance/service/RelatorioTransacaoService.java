@@ -1,6 +1,7 @@
 package br.relatorio.binance.service;
 
 import br.relatorio.binance.model.RelatorioTransacao;
+import br.relatorio.binance.model.Usuario;
 import br.relatorio.binance.repository.RelatorioTransacaoRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -26,6 +27,9 @@ public class RelatorioTransacaoService {
     @Autowired
     private RelatorioTransacaoRepository relatorioTransacaoRepository;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
     public Integer importarCSV(Path caminhoDoArquivo) throws IOException {
         // Lê o arquivo CSV
         try (InputStreamReader reader = new InputStreamReader(
@@ -47,7 +51,7 @@ public class RelatorioTransacaoService {
                         .trim();
                 headerMap.put(cleanKey, rawHeader);
             }
-
+            Usuario usuario = usuarioService.getUsuarioLogado();
             //User_ID,"UTC_Time","Account","Operation","Coin","Change","Remark"
             int i = 0;
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -63,6 +67,7 @@ public class RelatorioTransacaoService {
                     registro.setCoin(record.get("Coin"));
                     registro.setChange(parseBigDecimal(record.get("Change")));
                     registro.setRemark(record.get("Remark"));
+                    registro.setUsuario(usuario);
                     // Salva o registro no banco de dados
                     relatorioTransacaoRepository.save(registro);
                     i++;
