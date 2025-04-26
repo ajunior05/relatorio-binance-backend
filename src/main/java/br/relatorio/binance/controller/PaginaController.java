@@ -7,6 +7,7 @@ import br.relatorio.binance.model.Usuario;
 import br.relatorio.binance.repository.PairsCriptoRepository;
 import br.relatorio.binance.repository.RelatorioOrdemRepository;
 import br.relatorio.binance.repository.RelatorioTransacaoRepository;
+import br.relatorio.binance.service.RelatorioNomadService;
 import br.relatorio.binance.service.RelatorioOrdemService;
 import br.relatorio.binance.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +45,9 @@ public class PaginaController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private RelatorioNomadService relatorioNomadService;
 
     @Autowired
     private PairsCriptoRepository pairsCriptoRepository;
@@ -105,7 +111,7 @@ public class PaginaController {
     }
 
 
-    @Operation(summary = "Upload de Arquivo CSV", description = "Realiza o upload e importação de um arquivo CSV contendo ordens.")
+   /* @Operation(summary = "Upload de Arquivo CSV", description = "Realiza o upload e importação de um arquivo CSV contendo ordens.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Upload realizado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro ao processar o arquivo")
@@ -122,5 +128,24 @@ public class PaginaController {
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Erro: " + e.getMessage());
         }
-    }
+    }*/
+/*    @PostMapping("/uploadNomad")
+    public ResponseEntity<String> uploadPdfNomad(
+            @Parameter(description = "Arquivo PDF da Nomad") @RequestParam("file") MultipartFile file) {
+
+        try {
+            File tempFile = File.createTempFile("uploadNomad", ".pdf");
+            file.transferTo(tempFile);
+            relatorioNomadService.extrairTextoDoPdf(file);
+            return ResponseEntity.ok("Arquivo importado com sucesso!");
+
+*//*            PDDocument document = PDDocument.load(file.getInputStream());
+            PDFTextStripper stripper = new PDFTextStripper();
+            String texto = stripper.getText(document);
+            document.close();
+            return texto;*//*
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Erro: " + e.getMessage());
+        }
+    }*/
 }

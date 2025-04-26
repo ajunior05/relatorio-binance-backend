@@ -87,7 +87,6 @@ public class RelatorioOrdemService {
         }
     }
 
-
     private BigDecimal parseBigDecimal(String valorComUnidade) {
         if (valorComUnidade == null || valorComUnidade.isEmpty()) {
             return BigDecimal.ZERO;
