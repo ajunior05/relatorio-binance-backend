@@ -1,10 +1,8 @@
 package br.relatorio.binance.controller;
 
-import br.relatorio.binance.model.PairsCripto;
-import br.relatorio.binance.model.RelatorioOrdem;
-import br.relatorio.binance.model.RelatorioTransacao;
-import br.relatorio.binance.model.Usuario;
+import br.relatorio.binance.model.*;
 import br.relatorio.binance.repository.PairsCriptoRepository;
+import br.relatorio.binance.repository.RelatorioNomadRepository;
 import br.relatorio.binance.repository.RelatorioOrdemRepository;
 import br.relatorio.binance.repository.RelatorioTransacaoRepository;
 import br.relatorio.binance.service.RelatorioNomadService;
@@ -44,6 +42,9 @@ public class PaginaController {
     private RelatorioTransacaoRepository relatorioTransacaoRepository;
 
     @Autowired
+    private RelatorioNomadRepository relatorioNomadRepository;
+
+    @Autowired
     private UsuarioService usuarioService;
 
     @Autowired
@@ -70,6 +71,39 @@ public class PaginaController {
         }
     }
 
+    @Operation(summary = "Consultar Relatório da Nomad", description = "Retorna uma lista de ativos com base nos filtros: symbol,action e data.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Consulta realizada com sucesso"),
+    })
+    @GetMapping("/consultarNomad")
+    public List<RelatorioNomad> consultarNomad(
+            @Parameter(description = "Ativo comprado") @RequestParam(required = false) String symbol,
+            @Parameter(description = "tipo de transação") @RequestParam(required = false, defaultValue = "") String action,
+            @Parameter(description = "Data da compra (yyyy-MM-dd)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
+        Usuario usuario = usuarioService.getUsuarioLogado();
+        if ((symbol != null)||(action != null)||(data != null)){
+            return relatorioNomadRepository.buscarOrdensFiltro(symbol,action, data, usuario);
+        } else{
+            return Collections.emptyList();
+        }
+    }
+
+    @Operation(summary = "Consultar Pares", description = "Retorna uma lista de pares com base nos filtros: baseCurrancy,pair e quoteCurrancy.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Consulta realizada com sucesso"),
+    })
+    @GetMapping("/consultarPares")
+    public List<PairsCripto> consultarPares(
+            @Parameter(description = "Ativo comprado") @RequestParam(required = false) String baseCurrancy,
+            @Parameter(description = "tipo de transação") @RequestParam(required = false, defaultValue = "") String pair,
+            @Parameter(description = "tipo de transação") @RequestParam(required = false, defaultValue = "") String quoteCurrancy) {
+        if ((baseCurrancy != null)||(pair != null)||(quoteCurrancy != null)){
+            return pairsCriptoRepository.buscarPairsFiltro(baseCurrancy, pair, quoteCurrancy);
+        } else{
+            return Collections.emptyList();
+        }
+    }
+
     @Operation(summary = "Consultar pares", description = "Retorna uma lista de pares.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consulta realizada com sucesso"),
@@ -78,6 +112,8 @@ public class PaginaController {
     public List<PairsCripto> findAllPairsCripto(){
         return pairsCriptoRepository.findAll();
     }
+
+
 
     @Operation(summary = "Consultar Transações", description = "Retorna uma lista de transações com base nos filtros: coin, operation ou data.")
     @ApiResponses(value = {

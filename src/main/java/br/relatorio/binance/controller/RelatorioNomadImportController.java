@@ -14,10 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -52,10 +49,9 @@ public class RelatorioNomadImportController {
         try {
             List<RelatorioNomad> dados = relatorioNomadService.extrairDados(arquivo);
             relatorioNomadRepository.saveAll(dados);
-            return ResponseEntity.ok("Arquivo CSV importado com sucesso! O Total de Ordens importadas foi");
+            return ResponseEntity.ok("Arquivo CSV importado com sucesso! O Total de Ordens importadas foi " +dados.size());
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Erro ao importar o CSV: " + e.getMessage());
         }
     }
-
 }

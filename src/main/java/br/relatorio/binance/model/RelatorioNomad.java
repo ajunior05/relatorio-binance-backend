@@ -15,6 +15,7 @@ public class RelatorioNomad {
     private Long id;
     private String accountNumber;
     private String symbol;
+    private String action;
     @Column(precision = 38, scale = 8)
     private BigDecimal quantity;
     @Column(precision = 38, scale = 8)
@@ -29,12 +30,13 @@ public class RelatorioNomad {
     private Usuario usuario;
 
     public RelatorioNomad(Long id, String accountNumber,
-                          String symbol, BigDecimal quantity,
+                          String symbol, String action, BigDecimal quantity,
                           BigDecimal price, BigDecimal netAmount,
                           Usuario usuario, LocalDate tradeDate) {
         this.id = id;
         this.accountNumber = accountNumber;
         this.symbol = symbol;
+        this.action = action;
         this.quantity = quantity;
         this.price = price;
         this.usuario = usuario;
@@ -76,6 +78,14 @@ public class RelatorioNomad {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public BigDecimal getQuantity() {

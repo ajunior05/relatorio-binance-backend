@@ -68,7 +68,7 @@ public class RelatorioNomadService {
         }
         // Separar cabeçalhos
         String[] cabecalhosBrutos = linhas.get(cabecalhoIndex).split("\\s{1,}");
-        Set<String> camposIgnorados = Set.of("Security", "A/CType", "Action", "Capacity", "Trade", "Date", "Settle");
+        Set<String> camposIgnorados = Set.of("Security", "A/CType", "Capacity", "Trade", "Date", "Settle");
         List<String> cabecalhosFiltrados = new ArrayList<>();
 
         for (int i = 0; i < cabecalhosBrutos.length; i++) {
@@ -107,6 +107,8 @@ public class RelatorioNomadService {
             for (int j = 1; j < valores.length; j++) {
                 if (valores[j].matches("-?\\d+\\.\\d+")) { // Números (quantity, price)
                     valoresFiltrados.add(valores[j]);
+                } else if (valores[j].matches("(?i)buy") || valores[j].matches("(?i)sell")) { // primeira data (Trade Date)
+                    valoresFiltrados.add(valores[j]);
                 } else if (valores[j].matches("\\d{1,2}/\\d{1,2}/\\d{2,4}") && !encontrouPrimeiraData) { // primeira data (Trade Date)
                     encontrouPrimeiraData = true;
                     valoresFiltrados.add(valores[j]);
@@ -136,6 +138,9 @@ public class RelatorioNomadService {
                 RelatorioNomad transacao = new RelatorioNomad();
                 if (valor.containsKey("Symbol")){
                     transacao.setSymbol(valor.get("Symbol"));
+                }
+                if (valor.containsKey("Action")){
+                    transacao.setAction(valor.get("Action"));
                 }
                 if (valor.containsKey("Quantity")){
                     transacao.setQuantity(new BigDecimal(valor.get("Quantity")));
